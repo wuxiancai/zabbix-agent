@@ -21,12 +21,16 @@ NEW_ACTIVE_SERVER="192.168.9.68"
 # 替换 Server 和 ActiveServer 的值
 sudo sed -i "s/^Server=.*/Server=$NEW_SERVER/" "$CONFIG_FILE"
 sudo sed -i "s/^ActiveServer=.*/ActiveServer=$NEW_ACTIVE_SERVER/" "$CONFIG_FILE"
-sudo sed -i "AllowKey=log[*]" "$CONFIG_FILE"
-sudo sed -i "UserParameter=log.monitor,/usr/bin/tail -n100 /home/account1/poly-ubuntu-v1.1/logs/crypto_trader.log | grep -E 'ERROR|未登录' " "$CONFIG_FILE"
+
+sudo echo "AllowKey=log[*]" | sudo tee -a "$CONFIG_FILE"
+sudo echo "UserParameter=log.monitor,/usr/bin/tail -n100 /home/account1/poly-ubuntu-v1.1/logs/crypto_trader.log | grep -E \"ERROR|未登录\"" | sudo tee -a "$CONFIG_FILE"
 
 # 验证修改结果
-echo "Updated configuration:"
+sudo echo "Updated configuration:"
 grep -E "^(Server|ActiveServer)=" "$CONFIG_FILE"
+
+sudo chown zabbix:zabbix /home/account1/poly-ubuntu-v1.1/logs/crypto_trader.log
+sudo chmod 644 /home/account1/poly-ubuntu-v1.1/logs/crypto_trader.log
 
 echo "设置自启动。。。"
 sudo systemctl start zabbix-agent
