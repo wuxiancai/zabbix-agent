@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "更新系统。。。"
-sudo apt update && sudo apt upgrade
+sudo apt update && sudo apt upgrade -y
 
 echo "下载 ZABBIX AGENT..."
 wget https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.2+ubuntu22.04_all.deb
