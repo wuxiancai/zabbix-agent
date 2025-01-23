@@ -3,10 +3,29 @@ echo "更新系统。。。"
 sudo apt update && sudo apt upgrade -y
 
 echo "下载 ZABBIX AGENT..."
-wget https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.2+ubuntu22.04_all.deb
+url="https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.2+ubuntu22.04_all.deb"
+output_file="zabbix-release_latest_7.2+ubuntu22.04_all.deb"
+
+# 最大重试次数
+max_retries=5
+
+for ((i=1; i<=max_retries; i++)); do
+  echo "尝试第 $i 次下载..."
+  wget -O "$output_file" "$url" && break
+  echo "下载失败，等待 3 秒后重试..."
+  sleep 3
+done
+
+if [[ ! -f "$output_file" ]]; then
+  echo "下载失败，超过最大重试次数 $max_retries 次，请检查网络或 URL。"
+  exit 1
+fi
+echo "下载成功！"
+
 echo "安装 ZABBIX AGENT..."
 sudo dpkg -i zabbix-release_latest_7.2+ubuntu22.04_all.deb
 sudo apt update && sudo apt install zabbix-agent -y
+
 echo "开放端口 10050"
 sudo ufw allow 10050/tcp
 echo "编辑配置文件"
